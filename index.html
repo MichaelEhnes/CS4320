@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Warehouse Managment and Pathfinder Tool</title>
+        <meta charset="utf-8">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <style>
+            body{
+                background:  #66c2ff;
+            }
+            #title{
+                font-family: Arial, Helvetica, sans-serif;
+                font-weight: bold;
+                font-size: 11vw;
+                text-align: center;
+            }
+            input[type=text]{
+                width: 100%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                box-sizing: border-box;           
+            }
+            input[type=submit]{
+                width: 100%;
+                padding: 16px 32px;
+                border: none;
+            }
+            #form
+            {
+                margin: 0 auto;
+                text-align: center;
+                width: 40%;
+            }
+            #Incorrect
+            {
+                margin: 0 auto;
+                width: 40%;
+                font-size: 25px;
+                display : none;
+            }
+        </style>
+        <script>
+$(document).ready(function(){ 
+    $('#form').submit(function(event){
+           
+        var post_data = $('#form').serialize();
+      $.post('login.php', post_data, function(data) {
+            $.ajax({
+              type: "POST",
+              url: "login.php",
+              data: post_data,
+                
+             success:function(data) {
+                 if(!$.trim(data)){
+                $('#Incorrect').css({
+                'display' : 'block'
+                 }); 
+                $('#Incorrect').html("Error not correct login");
+                return;
+                 }
+                 else{
+
+                 $('#form').css({
+                'display' : 'none'
+                 });
+                $('#Incorrect').css({
+                'display' : 'none'
+                 }); 
+                    window.location.href = 'splashpage.php'
+                 }
+                    },
+                 error: function(data) {
+                     
+                    $('#Incorrect').html("Failed to Connect");
+                    
+                },
+                
+                    }) 
+                    
+                });
+         event.preventDefault();
+        });
+});
+    </script>
+    </head>
+    <body>
+        <h1 id="title">
+            WMAPT
+        </h1>
+        <div>
+        <form id="form">
+                <label for="user"></label>
+                <input id="user" type="text" name="username" placeholder="Username" maxlength="15">
+
+                <label for="pass"></label>
+                <input id="pass" type="text" name="password" placeholder="Password">
+            <div id="submit">
+                <input type="submit" value="Submit">
+            </div>
+           
+        </form>
+        <div id="Incorrect">Incorrect Login</div>
+        </div>
+    </body>
+
+</html>

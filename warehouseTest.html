@@ -1,0 +1,148 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+crossorigin="anonymous"></script>
+<style>
+        h1{
+            color: black;
+            font-size: 25px;
+            text-align: center;
+            width: 100%;
+        }
+        #warehouseContainer{
+            max-height: 80%;
+            min-height: 700px;
+            max-width: 100%;
+            min-width: 700px;
+            border: 5px solid blue;
+            margin: 0px;
+            align-content: center;
+        }
+    div.blockLength{
+            min-width: 100%;
+            min-height: 100%;
+            display: flex;
+           flex-wrap: wrap;
+            margin: 0px;
+    }
+    .blockWidth{
+        width : 9%;
+        min-height: 100%;
+        float: left;
+        margin: 0px;
+        display: block;
+        border: 1px solid black;
+    }
+    .blockWidth : hover{
+        background-color: azure;
+    }
+    
+        
+</style>
+    
+<script>
+$(document).ready(function(){ 
+var Hblock;
+var Lblock;
+              $.get('warehouseTest.php', function(data) {
+                $.ajax({
+                  type: "GET",
+                  url: "warehouseTest.php",
+
+                 success:function(data) {
+                      var i = 0;
+                      dat = $.parseJSON(data); 
+                     
+                    while(i < dat.length){
+                         $("#WarehouseName").html("Warehouse : " + dat[i].key2);
+//gets warehoue elemets are in order: ID, Name, Height, Length
+                        var height  = Number(dat[i].key3);
+                        var length = Number(dat[i].key4);
+                        Hblock = getBlocksForHeight(height);
+                        Lblock = getBlocksForLength(length);
+                        console.log("Width of Warehouse is " + height);
+                        console.log("Length of Warehouse is " + length);
+                        console.log("Num of blocks to make width is " + Hblock);
+                        console.log("Num of blocks to make width is " + Lblock);
+                        //var Lpercent = Lblock.toString() + "%";
+                        setContainers(Hblock, Lblock);
+                      
+                        //10%;//Lpercent;
+                        //setContainersInner(); 
+                        //var cost = temp.toFixed(2);
+                        //This will append html code to the website will need to add more and have a option to add items, delete items and what not.
+                        
+                        //$('#warehouseContainer').append("<p>" + Hblock + "</p>");
+                        /*
+                        $('#list').append("<div><p>"+ dat[i].key2 + "$" + cost + "</p><p class='Addbutton'><button type='button'>Add To Cart</p></div>");
+                        */
+                            i++;
+                        }
+                    AssignHeightSide(Lblock);
+                    AssignWidthSide(Hblock);
+                        },
+                     error: function(data) {
+                        alert("Failed to Connect");
+                    },
+                        })
+                   //$("div.blockLength").css({"width" : "75px"});
+
+                    });
+    
+    function AssignWidthSide(widthNum){
+        var total = document.getElementById('warehouseContainer').clientWidth;
+        var percent = (total / widthNum) - 2;
+        percent = percent.toString() + "px";
+        $("div.blockWidth").css({"min-width" : percent});
+    }
+   function AssignHeightSide(lengthNum){
+       var total = document.getElementById('warehouseContainer').clientHeight;
+       console.log(total);
+        var percent = total / lengthNum;
+       console.log(percent);
+       percent = percent.toString() + "px";
+        $("div.blockLength").css({"min-height" : percent});
+        
+    }
+    
+    function setContainers(height, width){
+        var i = 0;
+        var x = 0;
+        var inner = "";
+        while(x < width){
+            inner += "<div class='blockWidth'>Test</div>";
+            x++;
+        }
+        console.log(inner);
+        //var inner = setContainersInner(width);
+
+        while(i < height){
+            $('#warehouseContainer').append("<div class='blockLength'>" + inner + "</div>");
+            i++;
+        }
+    }
+ 
+    
+    function getBlocksForHeight(height){
+        var num = height / 10;
+        return num;
+    }
+    
+    function getBlocksForLength(length){
+        var num = length / 10;
+        return num;
+    }
+
+
+            });
+   
+
+</script>
+</head>
+<body>
+<h1 id="WarehouseName">Warehouse Project</h1>
+    <div id="warehouseContainer"></div>
+</body>
+    
+</html>
