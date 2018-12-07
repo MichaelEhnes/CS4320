@@ -1,0 +1,1 @@
+Readme 5The major changes to the documentation includes:- Added the technical documentation pdf- Edited or revised each function and what they do in the user doc- Added function “Adding User to the List” to the user docThe rest of the documents needed no changes

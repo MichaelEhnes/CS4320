@@ -78,7 +78,7 @@
                         console.log(typeof cost);
                         //var cost = temp.toFixed(2);
                         //This will append html code to the website will need to add more and have a option to add items, delete items and what not. 
-                        $('#list').append("<div><p>"+ " " + dat[i].key2 + " " + "$" + cost + "</p><p class='Addbutton'><button type='button'>Add To Cart</p></div>");
+                        $('#list').append("<div><p>"+ " " + dat[i].key2 + " " + "$" + cost + "</p></div>");
                                           
                                           
                                           
@@ -108,7 +108,8 @@
             <a href="splashpage.php">List</a>
             <a href="search.php">Search</a>
             <a href="Warehouse.html">Map</a>
-            <a href="#">Settings</a>
+            <a href="AddUser.php">Add User</a>
+            <a href="logout.php">Logout</a>
         </div>
         <span style="font-size:30px;cursor:pointer" onclick="openNav()"> &#9776;</span>
          
@@ -118,7 +119,7 @@
             </div>
 
 
-<a id="btnEmpty" href="index.php?action=empty">Empty Cart</a>
+<!--<a id="btnEmpty" href="index.php?action=empty">Empty Cart</a>-->
 <?php
 if(isset($_SESSION["cart_item"])){
     $total_quantity = 0;
@@ -144,8 +145,8 @@ if(isset($_SESSION["cart_item"])){
 				<td><img src="<?php echo $item["image"]; ?>" class="cart-item-image" /><?php echo $item["name"]; ?></td>
 				<td><?php echo $item["code"]; ?></td>
 				<td style="text-align:right;"><?php echo $item["quantity"]; ?></td>
-				<td  style="text-align:right;"><?php echo "$ ".$item["price"]; ?></td>
-				<td  style="text-align:right;"><?php echo "$ ". number_format($item_price,2); ?></td>
+				<td style="text-align:right;"><?php echo "$ ".$item["price"]; ?></td>
+				<td style="text-align:right;"><?php echo "$ ". number_format($item_price,2); ?></td>
 				<td style="text-align:center;"><a href="index.php?action=remove&code=<?php echo $item["code"]; ?>" class="btnRemoveAction"><img src="icon-delete.png" alt="Remove Item" /></a></td>
 				</tr>
 				<?php
@@ -165,7 +166,7 @@ if(isset($_SESSION["cart_item"])){
   <?php
 } else {
 ?>
-<div class="no-records">Your Cart is Empty</div>
+<!--<div class="no-records">Your Cart is Empty</div>-->
 <?php 
 }
 ?>

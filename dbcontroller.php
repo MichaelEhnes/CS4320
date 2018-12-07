@@ -1,5 +1,12 @@
 <?php
+
+session_start();
+$_SESSION['user'];
+$_SESSION['WarehouseID'];
+$_SESSION['adminCred'];
 class DBController {
+    
+    //this is an easy way for a sql leak.....
 	private $host = "localhost";
 	private $user = "ec2-user";
 	private $password = "Liam";
@@ -17,8 +24,7 @@ class DBController {
         
 		return $conn;
 	}
-	
-     
+
     
 
     
@@ -40,4 +46,5 @@ class DBController {
 		return $rowcount;	
 	}
 }
+
 ?>

@@ -17,16 +17,18 @@ if($_SESSION['WarehouseID'] == "" || $_SESSION['WarehouseID'] == null){
 
 else{
     $warehouseID = $_SESSION['WarehouseID'];
-    $query = "SELECT * FROM Warehouse WHERE WarehouseID = '$warehouseID';";
+    
+    $query = "SELECT * FROM StoreItems WHERE WarehouseID = '$warehouseID';";
     $result = $mysqli->query($query);
     $array = array();
      while($row = mysqli_fetch_array($result))
     {
 
-       $array[] = array('key1' => $row['WarehouseID'], 'key2' => $row['warehouseName'], 'key3' => $row['warehouseHeight'], 'key4' => $row['warehouseLength']);
+       $array[] = array('key1' => $row['itemCode'], 'key2' => $row['itemName'], 'key3' => $row['itemQuantity'], 'key4' => $row['itemCost'], 'key5' => $row['itemLocX'], 'key6' => $row['itemLocY']);
     }
-
-    echo json_encode($array);
+    
+    $print_r($array);
+    echo json_encode($array); 
 
 
     $result->close();

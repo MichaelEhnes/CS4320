@@ -1,6 +1,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="main.css">
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 crossorigin="anonymous"></script>
 <style>
@@ -10,41 +11,116 @@ crossorigin="anonymous"></script>
             text-align: center;
             width: 100%;
         }
-        #warehouseContainer{
-            max-height: 80%;
-            min-height: 700px;
-            max-width: 100%;
-            min-width: 700px;
-            border: 5px solid blue;
-            margin: 0px;
-            align-content: center;
-        }
-    div.blockLength{
-            min-width: 100%;
-            min-height: 100%;
-            display: flex;
-           flex-wrap: wrap;
-            margin: 0px;
+    div{
+        align-self: center;
+        position: relative;
     }
-    .blockWidth{
-        width : 9%;
-        min-height: 100%;
-        float: left;
-        margin: 0px;
-        display: block;
-        border: 1px solid black;
+        
+    .popup {
+        top: 0;
+        margin: 0 auto;
+        align-content: center;
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
     }
-    .blockWidth : hover{
-        background-color: azure;
+
+/* The actual popup (appears on top) */
+.popup .popuptext{
+    visibility: hidden;
+    width: 800px;
+    height: 500px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin: auto;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+    content: "";
+    position: absolute;
+    margin: auto;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;} 
+    to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+}
+    #coordy{
+        display: none;
+    }
+    #coordx{
+        display: none;
     }
     
-        
+    
 </style>
     
 <script>
+var lastX;
+var lastY;
+    
+    function myFunction(coordx, coordy){
+        $('#myPopup').html("<div class='itemContainerL'><div class='itemContainerW'>Item Code</div><div class='itemContainerW'>Item Name</div><div class='itemContainerW'>Quantity</div></div>");
+        lastX = coordx;
+        lastY = coordy;
+        
+        $.post( "getBoxItems.php", { coordx: coordx, coordy: coordy })
+            .done(function( data){
+                itemData = $.parseJSON(data); 
+                var i = 0;
+            
+                while(i < itemData.length){
+                    $('#myPopup').append("<div class='itemContainerL'><div class='itemContainerW'>" + itemData[i].key1 + "</div><div class='itemContainerW'>" + itemData[i].key2 + "</div><div class='itemContainerW'>" + itemData[i].key3 + "</div></div>");
+                    i++;
+                }
+             addItemListContainer();
+           
+        });
+        var popup = document.getElementById("myPopup");
+        popup.classList.toggle("show");
+        
+    }
+    
+    
+    function addItemListContainer(){
+        //will need to create a filter here incase the user puts in text where variables should be
+        //temCode, itemName, itemQuantity, itemCost,
+        $('#myPopup').append("<hr><form id='formItem'><input id='itemCode' type='text' name='itemCode' placeholder='Item Code'><input id='itemName' type='text' name='itemName' placeholder='Item Name'><input id='quantity' type='text' name='quantity' placeholder='Item Quantity'><input id='cost' type='text' name='cost' placeholder='Item Cost'><input id='coordx' type='text' name='coordx'/><input id='coordy' type='text' name='coordy'/></form><div id='submit'><button id='button1234' onclick='testingclickingthing()' >Submit</button></div>");
+        //div id='submit'><button onclick='testingclickingthing()'>Submit</button></div>"
+    }
+    
+
 $(document).ready(function(){ 
+    
 var Hblock;
 var Lblock;
+var setY = 0;  
+    
+                       
               $.get('getWarehouse.php', function(data) {
                 $.ajax({
                   type: "GET",
@@ -65,17 +141,11 @@ var Lblock;
                         console.log("Num of blocks to make width is " + Hblock);
                         console.log("Num of blocks to make width is " + Lblock);
                         //var Lpercent = Lblock.toString() + "%";
-                        setContainers(Hblock, Lblock);
+                        while(setY < Hblock){
+                            setContainers(Hblock, Lblock);
+                            setY++;
+                        }
                       
-                        //10%;//Lpercent;
-                        //setContainersInner(); 
-                        //var cost = temp.toFixed(2);
-                        //This will append html code to the website will need to add more and have a option to add items, delete items and what not.
-                        
-                        //$('#warehouseContainer').append("<p>" + Hblock + "</p>");
-                        /*
-                        $('#list').append("<div><p>"+ dat[i].key2 + "$" + cost + "</p><p class='Addbutton'><button type='button'>Add To Cart</p></div>");
-                        */
                             i++;
                         }
                     AssignHeightSide(Lblock);
@@ -87,7 +157,48 @@ var Lblock;
                         })
                    //$("div.blockLength").css({"width" : "75px"});
 
-                    });
+                  $.get('getMyStuff.php', function(data) {
+                        $.ajax({
+                          type: "GET",
+                          url: "getMyStuff.php",
+
+                         success:function(data) {
+                              items = $.parseJSON(data); 
+                             var i = 0;
+                            while(i < items.length){
+                                appendItemstoBlock(items[i].key5, items[i].key6, items[i].key2);
+                                i++;
+                            }
+
+                         }
+                        });
+                });
+                  $.get('getOrder.php', function(data) {
+                        $.ajax({
+                          type: "GET",
+                          url: "getOrder.php",
+
+                         success:function(data) {
+                             
+                              items = $.parseJSON(data); 
+                              var lastOrderID = "";
+                             var i = 0;
+                            while(i < items.length){
+                                if(items[i].key4 != lastOrderID){
+                                    $('#orderMainBox').append("<div id='" + items[i].key4 +"' class='orderContainer'> Order :" +items[i].key4+ "</div>");
+                                }
+                                var lastOrderID = items[i].key4;
+                                var lastOrderportion = "div#" + items[i].key4;
+                                $(lastOrderportion).append("<div>"+items[i].key2+"<div>");
+                                i++;
+                            }
+
+                         }
+                        });
+                });
+            });
+    
+
     
     function AssignWidthSide(widthNum){
         var total = document.getElementById('warehouseContainer').clientWidth;
@@ -95,6 +206,7 @@ var Lblock;
         percent = percent.toString() + "px";
         $("div.blockWidth").css({"min-width" : percent});
     }
+    
    function AssignHeightSide(lengthNum){
        var total = document.getElementById('warehouseContainer').clientHeight;
        console.log(total);
@@ -110,30 +222,17 @@ var Lblock;
         var x = 0;
         var inner = "";
         while(x < width){
-            inner += "<div class='blockWidth'>Test</div>";
+            inner += "<div class='blockWidth' id= '" + x + "b" + setY +"' onclick='myFunction("+x+","+setY+")'></div>";
             x++;
         }
-        console.log(inner);
-        //var inner = setContainersInner(width);
-
-        while(i < height){
             $('#warehouseContainer').append("<div class='blockLength'>" + inner + "</div>");
-            i++;
-        }
     }
-    //var inner = "";
-  /*  
-    function setContainersInner(width){
-        var i = 0;
-        
-        while(i < width){
-            inner += "<p class = 'blockWidth'>Test</p>";
-            i++;
-        }
-        console.log(inner);
-        console.log(typeof(inner));
+
+    function appendItemstoBlock(coordx, coordy, itemName){
+        var testString = "div#"+coordx+"b"+coordy+".blockwidth";
+        $(testString).append('<p>' + itemName + "\n" + '</p>');
+        console.log(testString);
     }
-  */  
     
     function getBlocksForHeight(height){
         var num = height / 10;
@@ -152,8 +251,81 @@ var Lblock;
 </script>
 </head>
 <body>
+         <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="splashpage.php">List</a>
+            <a href="search.php">Search</a>
+            <a href="Warehouse.html">Map</a>
+            <a href="AddUser.html">Add User</a>
+            <a href="logout.php">Logout</a>
+        </div>
+    <script>
+function testingclickingthing(){
+            $('#coordy').val(lastY);
+            $('#coordx').val(lastX);
+        var post_data = $('#formItem').serialize();
+          $.post('addNewItems.php', post_data, function(data) {
+                $.ajax({
+                  type: "POST",
+                  url: "addNewItems.php",
+                  data: post_data,
+                 success:function(data) {
+                    console.log("Successful POST");
+                 }
+
+                });
+        
+    
+          });
+
+ sumbitToStore();
+}
+        
+function sumbitToStore(){
+    console.log("Got here");
+        var post_data = $('#formItem').serialize();
+    console.log(post_data);
+
+         $.post('addItemsToWhole.php', post_data, function(data) {
+                $.ajax({
+                  type: "POST",
+                  url: "addItemsToWhole.php",
+                  data: post_data,
+              
+                 success:function(data) {
+                    console.log("Successful POST");
+                     location.reload();
+                 }
+
+                });
+        
+    
+          });
+    //location.reload(); 
+
+}
+</script>
+        <span style="font-size:30px;cursor:pointer" onclick="openNav()"> &#9776;</span>
+
 <h1 id="WarehouseName">Warehouse Project</h1>
     <div id="warehouseContainer"></div>
-</body>
     
+<div class="popup">
+    <div class="popuptext" id="myPopup">Popup text...
+    </div>
+</div>
+<div id="orderMainBox">Orders
+</div>
+</body>
+        <script>
+            /* Set the width of the side navigation to 250px */
+function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+}
+
+/* Set the width of the side navigation to 0 */
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+}
+        </script>
 </html>

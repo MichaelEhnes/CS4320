@@ -90,6 +90,10 @@ form.example::after {
     margin: 0 auto;
     width: 50%
 }
+#searchfunction{
+    margin: 0 auto;
+    width: 35%
+}
         </style>
 
 <?php
@@ -104,7 +108,7 @@ switch($_GET["action"]) {
          
 		if(!empty($_POST["quantity"])) {
 			$productByCode = $db_handle->runQuery     
-            ("SELECT * FROM Items");
+            ("SELECT * FROM Items WHERE itemCode='" .$_GET["code"] . "'");
        
             //WHERE itemName LIKE '%$item%''
             
@@ -150,28 +154,26 @@ switch($_GET["action"]) {
 
     </head>
 
-<BODY>
-      
-    <body>
+<body>
          <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <a href="splashpage.php">List</a>
             <a href="search.php">Search</a>
             <a href="Warehouse.html">Map</a>
-            <a href="#">Settings</a>
+            <a href="AddUser.html">Add User</a>
+            <a href="logout.php">Logout</a>
         </div>
         <span style="font-size:30px;cursor:pointer" onclick="openNav()"> &#9776;</span>
 
         <h1>SEARCH</h1>
         
         <div id="search">
-        <form class="example" action="/searchItems.php" method="post">
+        <form class="example" action="search.php" method="post">
             <input type="text" placeholder="Search.." name="searchItem">
             <button type="submit"><i class="fa fa-search"></i></button>
         </form>
         </div>
-        <div id="itemList">
-        </div>
+        <br>
         <script>
             /* Set the width of the side navigation to 250px */
     function openNav() {
@@ -183,12 +185,58 @@ function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
 }
         </script>
-    </body>
-</html>
 
-<div id="shopping-cart">
+
+<div id = "searchfunction">
+<?php
+    require_once "../db.conf";
+    $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+
+    if($mysqli->connect_error){
+        die('Connect Error('. $mysqli->connect_errno . ') ' . $mysqli->connect_error);
+    }
+
+    $item = $_POST['searchItem'];
+
+    if(isset($_POST['searchItem']))
+    {
+        $query = "SELECT * FROM Items WHERE itemName LIKE '%$item%'";
+        $result = $mysqli->query($query);
+        $array = array();
+        
+        while($row = mysqli_fetch_array($result))
+        {
+            if(!isset($row)){ echo $row;}
+            $array[] = array('key1' => $row['itemCode'], 'key2' => $row['itemName'], 'key3' => $row['itemCost']);
+        }
+        
+        foreach($array as $key => $arrKey){ ?>
+            
+            <div class="product-item">
+			<form method="post" action="search.php?action=add&code=<?php echo $array[$key]["key1"]; ?>">
+
+			<div class="product-tile-footer">
+			<div class="product-title"><?php echo $array[$key]["key2"]; ?></div>
+			<div class="product-price"><?php echo "$".$array[$key]["key3"]; ?></div>
+			<div class="cart-action"><input type="text" class="product-quantity" name="quantity" value="1" size="2" />
+                <input type="submit" value="Add to Cart" class="btnAddAction" /></div>
+			</div>
+			</form>
+		</div>
+        <br>
+            
+        <?php    
+        }
+    }
+
+    $mysqli->close();
+
+?>
+</div>
+
+<!-- Beginning of Shopping Cart Display -->    
     
-   
+<div id="shopping-cart"> 
 <div class="txt-heading" align="center"><h2>Shopping Cart</h2></div>
 
 <a id="btnEmpty" href="search.php?action=empty" align="center">Empty Cart</a>
@@ -243,33 +291,6 @@ if(isset($_SESSION["cart_item"])){
 ?>
 </div>
 
-<div id="product-grid">
-	<div class="txt-heading"><h2>Products</h2></div>
-	<?php
-	$product_array = $db_handle->runQuery("SELECT * FROM Items");
-	if (!empty($product_array)) { 
-		foreach($product_array as $key=>$value){
-	?>
-		<div class="product-item">
-			<form method="post" action="search.php?action=add&code=<?php echo $product_array[$key]["itemCode"]; ?>">
 
-			<div class="product-tile-footer">
-			<div class="product-title"><?php echo $product_array[$key]["itemName"]; ?></div>
-			<div class="product-price"><?php echo "$".$product_array[$key]["itemCost"]; ?></div>
-			<div class="cart-action"><input type="text" class="product-quantity" name="quantity" value="1" size="2" />
-                <input type="submit" value="Add to Cart" class="btnAddAction" /></div>
-			</div>
-			</form>
-		</div>
-	<?php
-		}
-	}
-    else
-    {
-        
-        echo "<H1> Empty Table</h1>";
-    }
-	?>
-</div>
-</BODY>
-</HTML>
+</body>
+</html>
