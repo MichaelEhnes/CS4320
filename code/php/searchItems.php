@@ -1,3 +1,8 @@
+<!--
+written by: Christian
+tested by: Christian
+debugged by: Christian
+-->
 <?php
 require_once "../db.conf";
 

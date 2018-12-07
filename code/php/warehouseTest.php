@@ -1,3 +1,9 @@
+<!--
+written by: Liam
+tested by: Liam
+debugged by: Liam
+-->
+
 <?php
 require_once "../db.conf";
 

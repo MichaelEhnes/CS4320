@@ -1,3 +1,8 @@
+<!--
+written by: Parker Jones
+tested by: Parker Jones
+debugged by: Parker Jones
+-->
 <?php
 require_once "../db.conf";
 
