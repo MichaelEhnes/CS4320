@@ -1,0 +1,4 @@
+The process of data collection is handled autonomously since we are using an SQL database backend that is already
+populated with required data. That required data being product information such as: product name, product code, 
+quantity of product in stock, and the price of each unit of product.This required data is used to calculate cost of a transaction
+and enables the cart feature of our program to be useful.
